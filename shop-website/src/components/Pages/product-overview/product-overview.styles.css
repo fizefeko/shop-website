@@ -5,8 +5,19 @@
   background-color: aliceblue;
   border: 1px solid rgb(218, 216, 216);
 }
-img {
+.img-responsive {
   width: 200px;
   height: 150px;
-  border: 1px solid rgb(218, 216, 216);
+  padding: 5px;
+  border: 1px solid rgb(218, 216, 216) !important;
+}
+.img-responsive:hover {
+  background-color: rgb(255, 255, 255);
+  transform: scale(1.4) translateX(30px);
+  border: 2px solid rgb(119, 119, 119) !important;
+  transition: transform 0.55s ease-out;
+}
+.btn-info {
+  width: 100px;
+  border-radius: 2px;
 }

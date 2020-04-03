@@ -1,41 +1,22 @@
 import React, { useEffect, useReducer } from "react";
 import Axios from "axios";
 import "./product-overview.styles.css";
+import { withRouter } from "react-router-dom";
 
-const initialState = {
-  records: [],
-  recordsLoading: false,
-  recordsError: ""
-};
+import { initialState, reducer } from "./product-overview.reducer";
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "FETCH_SUCCESS":
-      return {
-        ...state,
-        records: action.payload
-      };
-    case "FETCH_ERROR":
-      return {
-        ...state,
-        recordsError: action.payload
-      };
-
-    default:
-      return state;
-  }
-};
-const ProductOverview = () => {
+const ProductOverview = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
+    document.title = "PRODUCTS | PAGE";
     Axios.get(
-      "https://api.airtable.com/v0/appFOfImuRrfkIbgc/Produkt-Template?api_key=keyfAN0ST8IEPmunp"
+      `https://api.airtable.com/v0/appFOfImuRrfkIbgc/Produkt-Template?api_key=${process.env.REACT_APP_API_KEY}`
     ).then((response) => {
       dispatch({ type: "FETCH_SUCCESS", payload: response.data.records });
-      console.log(response.data.records[2].fields.Bilder[0].url);
     });
   }, []);
+
   return (
     <div>
       <div className="panel panel-info">
@@ -86,20 +67,15 @@ const ProductOverview = () => {
                       <span className="text-muted">€</span>
                     </strong>
                   </h6>
-                  <button type="button" className="btn btn-success">
+                  <button
+                    type="button"
+                    className="btn btn-info"
+                    onClick={() => {
+                      props.history.push(`/product/${record.id}`);
+                    }}
+                  >
+                    <i className="fas fa-info-circle mr-2"></i>
                     Details
-                  </button>
-                </div>
-                <div className="col-xs-4">
-                  {/* <input
-                        type="text"
-                        className="form-control input-sm"
-                        value="1"
-                      /> */}
-                </div>
-                <div className="col-xs-2">
-                  <button type="button" className="btn btn-link btn-xs">
-                    <span className="glyphicon glyphicon-trash"> </span>
                   </button>
                 </div>
               </div>
@@ -125,4 +101,4 @@ const ProductOverview = () => {
   );
 };
 
-export default ProductOverview;
+export default withRouter(ProductOverview);

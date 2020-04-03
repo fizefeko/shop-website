@@ -1,7 +1,9 @@
 body {
   background-color: #fdfdfd;
+  font-family: "Open Sans Condensed", sans-serif;
 }
 .container {
   padding-top: 30px;
   padding-bottom: 30px;
+  min-height: 100vh;
 }
