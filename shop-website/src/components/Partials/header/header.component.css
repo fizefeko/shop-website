@@ -1,0 +1,10 @@
+.logo {
+  width: 100px;
+  height: 30px;
+}
+.nav-link {
+  color: white !important;
+}
+.active {
+  font-weight: 700 !important;
+}

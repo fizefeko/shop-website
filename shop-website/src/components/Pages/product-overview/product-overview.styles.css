@@ -1,0 +1,12 @@
+.product-description {
+  width: 500px;
+}
+.product {
+  background-color: aliceblue;
+  border: 1px solid rgb(218, 216, 216);
+}
+img {
+  width: 200px;
+  height: 150px;
+  border: 1px solid rgb(218, 216, 216);
+}
