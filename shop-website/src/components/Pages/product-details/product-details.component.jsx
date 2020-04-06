@@ -1,9 +1,7 @@
 import React, { useEffect, useReducer } from "react";
 import Axios from "axios";
 import "./product-details.styles.css";
-
 import { initialState, reducer } from "./product-details.reducer";
-
 import Option from "../../option/option.component";
 
 const ProductDetails = (props) => {
@@ -14,9 +12,54 @@ const ProductDetails = (props) => {
       `https://api.airtable.com/v0/appFOfImuRrfkIbgc/Stückliste/${props.match.params.id}?api_key=${process.env.REACT_APP_API_KEY}`
     ).then((response) => {
       dispatch({ type: "FETCH_SUCCESS", payload: response.data });
+      for (var i = 0; i < response.data.fields.Material.length; i++) {
+        Axios.get(
+          `https://api.airtable.com/v0/appFOfImuRrfkIbgc/Lagerstand%20Material/${response.data.fields.Material[i]}?api_key=${process.env.REACT_APP_API_KEY}`
+        ).then((response) => {
+          if (
+            !state.allOptions.includes(response.data.fields["Option Name"]) &&
+            response.data.fields["Option Name"] !== "Allgemein"
+          ) {
+            let optionName = response.data.fields["Option Name"];
+            let materialName = response.data.fields["Materialname"];
+
+            dispatch({
+              type: "ADD_OPTION",
+              payload: { optionName, materialName },
+            });
+          }
+        });
+      }
     });
     document.title = state.product.fields.Name;
-  }, [props.match.params.id, state.product.fields.Name]);
+  }, []);
+
+  for (var i = 0; i < state.allOptions.length; i++) {
+    let option = state.allOptions[i];
+    if (
+      !Object.prototype.hasOwnProperty.call(
+        state.selectFields,
+        option.optionName
+      )
+    ) {
+      dispatch({
+        type: "ADD_SELECT_FIELD",
+        payload: option.optionName,
+      });
+    }
+  }
+  for (var i = 0; i < state.allOptions.length; i++) {
+    let option = state.allOptions[i];
+    for (var key in state.selectFields) {
+      if (
+        key === option.optionName &&
+        !state.selectFields[key].includes(option.materialName)
+      ) {
+        state.selectFields[key].push(option.materialName);
+      }
+    }
+  }
+
   return (
     <div>
       <div className="card">
@@ -61,12 +104,18 @@ const ProductDetails = (props) => {
                 items available in stock
               </span>
 
-              <select className="form-control mb-4">
-                <option defaultValue>Chose material</option>
-                {state.product.fields.Material.map((el, idx) => (
-                  <Option key={idx} Id={el} />
-                ))}
-              </select>
+              {Object.keys(state.selectFields).map((keyName, keyIndex) => {
+                return keyName !== "undefined" ? (
+                  <div key={keyIndex} className="d-flex flex-column  mb-2 mt-2">
+                    <label>
+                      <strong>{keyName}</strong>
+                    </label>
+                    <select className="form-control">
+                      <Option arr={state.selectFields[keyName]} />
+                    </select>
+                  </div>
+                ) : null;
+              })}
               <div className="action">
                 <button className="btn btn-success" type="button">
                   <i className="fas fa-cart-plus m-1"></i>

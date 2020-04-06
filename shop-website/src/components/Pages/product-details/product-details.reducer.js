@@ -3,7 +3,7 @@ export const initialState = {
     id: "",
     fields: {
       Name: "",
-      Material: [""],
+      Material: [],
       AutoID: 0,
       Beschreibung: "",
       "Zielpreis (Brutto)": 0,
@@ -12,12 +12,15 @@ export const initialState = {
       "Zielpreis (Netto)": 0,
       Gewinn: 0,
       "Kosten in %": 0,
-      "Auf Lager": 0
+      "Auf Lager": 0,
     },
-    createdTime: ""
+    createdTime: "",
   },
+  allOptions: [],
+  selectFields: {},
+  selectFieldsFinishedLoading: false,
   recordsLoading: false,
-  recordsError: ""
+  recordsError: "",
 };
 
 export const reducer = (state, action) => {
@@ -25,14 +28,44 @@ export const reducer = (state, action) => {
     case "FETCH_SUCCESS":
       return {
         ...state,
-        product: action.payload
+        product: action.payload,
       };
     case "FETCH_ERROR":
       return {
         ...state,
-        recordsError: action.payload
+        recordsError: action.payload,
       };
-
+    case "ADD_OPTION":
+      return {
+        ...state,
+        allOptions: [...state.allOptions, action.payload],
+      };
+    case "ADD_SELECT_FIELD":
+      return {
+        ...state,
+        selectFields: {
+          ...state.selectFields,
+          [action.payload]: [],
+        },
+      };
+    case "CLEAR_SELECT_FIELD":
+      return {
+        ...state,
+        selectFields: {
+          ...state.selectFields,
+          [action.payload]: "",
+        },
+      };
+    case "ADD_OPTION_VALUE":
+      return {
+        ...state,
+        optionValues: [...state.optionValues, action.payload],
+      };
+    case "SELECT_FIELD_FINISHED_LOADING":
+      return {
+        ...state,
+        selectFieldsFinishedLoading: action.payload,
+      };
     default:
       return state;
   }
